@@ -1,7 +1,6 @@
 #include <iostream>
 #include "checker.h"
 
-
 class RootDAta
 {
 public:
@@ -17,9 +16,7 @@ public:
 class MyData : public RootDAta, public checker<MyData> //MODIFICATION: Inherit from checker<MyData>
 {
 public:
-    MyData()
-    {
-    }
+    MyData() = default;
 
     MyData(int v)
     {
@@ -41,9 +38,7 @@ public:
         new (this) MyData(data);
     }
 
-    ~MyData()
-    {
-    }
+   // ~MyData() = default;
 };
 
 class MyData2 : public RootDAta, public checker<MyData2>     //MODIFICATION: Inherit from checker<MyData2>
@@ -62,17 +57,10 @@ public:
         std::cout << "Copy constructor of MyData" << std::endl;
     }
 
-   
     ~MyData2()
     {
     }
 };
-
-
-
-
-
-
 
 void test1()
 {
@@ -103,7 +91,6 @@ void test2()
     d2 = d2;        // Call operator=
 
     d2.testInplace(d1);
-
 }
 
 int main(int artgc, char** argv) 
@@ -112,8 +99,6 @@ int main(int artgc, char** argv)
     {
         //test1();
         test2();
-       
-
     }
     catch (const std::exception& e)
     {
