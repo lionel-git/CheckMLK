@@ -30,6 +30,17 @@ public:
         std::cout << "Copy constructor of MyData" << std::endl;
     }
 
+    MyData& operator=(const MyData& data)
+    {
+        std::cout << "Operator=" << std::endl;
+        return *this;
+    }
+
+    void testInplace(MyData& data)
+    {
+        new (this) MyData(data);
+    }
+
     ~MyData()
     {
     }
@@ -51,33 +62,58 @@ public:
         std::cout << "Copy constructor of MyData" << std::endl;
     }
 
+   
     ~MyData2()
     {
     }
 };
 
+
+
+
+
+
+
+void test1()
+{
+    MyData2 data_spec2;
+    MyData2 data_spec17(17);
+
+    MyData* tabPData[10];
+    for (int i = 0; i < 10; ++i)
+    {
+        tabPData[i] = new MyData();
+        delete tabPData[i];
+        tabPData[i] = new MyData();
+    }
+    MyData d_temp;
+
+    auto data2 = *tabPData[7];
+
+    for (int i = 0; i < 10; ++i)
+    {
+        delete tabPData[i];
+    }
+}
+
+void test2()
+{
+    MyData d1;
+    MyData d2 = d1; // Rem: Call copy constructor !!!
+    d2 = d2;        // Call operator=
+
+    d2.testInplace(d1);
+
+}
+
 int main(int artgc, char** argv) 
 {
     try
     {
-        MyData2 data_spec2;
-        MyData2 data_spec17(17);
+        //test1();
+        test2();
+       
 
-        MyData* tabPData[10];
-        for (int i = 0; i < 10; ++i)
-        {
-            tabPData[i] = new MyData();
-            delete tabPData[i];
-            tabPData[i] = new MyData();
-        }
-        MyData d_temp;
-
-        auto data2 = *tabPData[7];
-
-        for (int i = 0; i < 10; ++i)
-        {
-            delete tabPData[i];
-        }
     }
     catch (const std::exception& e)
     {
