@@ -14,7 +14,7 @@ public:
     }
 };
 
-class MyData : public RootDAta, public checker<MyData>
+class MyData : public RootDAta, public checker<MyData> //MODIFICATION: Inherit from checker<MyData>
 {
 public:
     MyData()
@@ -25,7 +25,7 @@ public:
     {
     }
 
-    MyData(const MyData& data) : checker<MyData>(data)    //MODIFICATION: Inherit from checker<MyData>
+    MyData(const MyData& data) : checker<MyData>(data)    //MODIFICATION: call copy constructor
     {
         std::cout << "Copy constructor of MyData" << std::endl;
     }
@@ -35,7 +35,7 @@ public:
     }
 };
 
-class MyData2 : public RootDAta, public checker<MyData2>               //MODIFICATION: Inherit from checker<MyData2>
+class MyData2 : public RootDAta, public checker<MyData2>     //MODIFICATION: Inherit from checker<MyData2>
 {
 public:
     MyData2()
@@ -46,7 +46,7 @@ public:
     {
     }
 
-    MyData2(const MyData2& data) : checker<MyData2>(data)              //MODIFICATION: call copy constructor
+    MyData2(const MyData2& data) : checker<MyData2>(data)      //MODIFICATION: call copy constructor        
     {
         std::cout << "Copy constructor of MyData" << std::endl;
     }
@@ -55,13 +55,6 @@ public:
     {
     }
 };
-
-
-
-
-
-
-
 
 int main(int artgc, char** argv) 
 {

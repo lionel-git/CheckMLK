@@ -24,12 +24,7 @@ public:
         check_name();
         auto rhs_id = get_instance_id(&rhs);
         std::cout << std::format("COPY CTOR {}, this={}, id={} | rhs={}, rhs_id={}", class_name_, (void*)this, current_id_, (void*)&rhs, rhs_id) << std::endl;
-        auto it = instances_.find(this);
-        if (it == instances_.end())
-            instances_[this] = current_id_;
-        else
-            std::cout << std::format("ERROR: instance already exists, pointer={} id1={} id2={}", (void*)this, it->second, current_id_) << std::endl;
-        ++current_id_;
+        record_new_instance_id();
     }
 
     ~checker()
@@ -48,15 +43,18 @@ public:
         {
             std::cout << "Remaining instances:" << instances_.size() << std::endl;
         }
-
     }
 
 private:
-
     void record_new_instance(const std::string& context)
     {
         check_name();
         std::cout << std::format("CTOR {} {}, this={}, id={}", class_name_, context, (void*)this, current_id_) << std::endl;
+        record_new_instance_id();
+    }
+
+    void record_new_instance_id()
+    {
         auto it = instances_.find(this);
         if (it == instances_.end())
             instances_[this] = current_id_;
