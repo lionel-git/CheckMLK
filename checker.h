@@ -1,7 +1,12 @@
 #pragma once
 #include <map>
 #include <iostream>
+#if defined(__cpp_lib_source_location)
 #include <format>
+using namespace fmt = std;
+#else
+#include <fmt/format.h>
+#endif
 #include <string>
 #include <fstream>
 #include <set>
@@ -49,7 +54,7 @@ public:
     {
         check_name();
         auto rhs_id = get_instance_id(&rhs);
-        *out_ << std::format("COPY CTOR {}, this={}, id={} | rhs={}, rhs_id={}", class_name_, cast_format(this), current_id_, cast_format(&rhs), rhs_id) << std::endl;
+        *out_ << fmt::format("COPY CTOR {}, this={}, id={} | rhs={}, rhs_id={}", class_name_, cast_format(this), current_id_, cast_format(&rhs), rhs_id) << std::endl;
         record_new_instance_id("COPY CTOR");
     }
 
@@ -59,19 +64,19 @@ public:
         auto it = instances_.find(this);
         if (it != instances_.end())
         {
-            *out_ << std::format("DTOR {}, this={}, id={}", class_name_, cast_format(this), it->second) << std::endl;
+            *out_ << fmt::format("DTOR {}, this={}, id={}", class_name_, cast_format(this), it->second) << std::endl;
             if (control_ids_.contains(it->second))
                 callback_(it->second, class_name_, "DTOR");
             instances_.erase(it);
         }
         else
-            *out_ << std::format("ERROR: instance not found, this={}", cast_format(this)) << std::endl;
+            *out_ << fmt::format("ERROR: instance not found, this={}", cast_format(this)) << std::endl;
 
         if (instances_.size() <= displayThreshold_)
         {
             *out_ << "= Remaining instances for "<< class_name_ <<  ":" << instances_.size() << std::endl;
             for (const auto& v : instances_)
-                *out_ << std::format("=     ptr={} id={}", cast_format(v.first), v.second) << std::endl;
+                *out_ << fmt::format("=     ptr={} id={}", cast_format(v.first), v.second) << std::endl;
         }
     }
 
@@ -91,7 +96,7 @@ private:
     void record_new_instance(const std::string& context)
     {
         check_name();
-        *out_ << std::format("CTOR {} {}, this={}, id={}", class_name_, context, cast_format(this), current_id_) << std::endl;
+        *out_ << fmt::format("CTOR {} {}, this={}, id={}", class_name_, context, cast_format(this), current_id_) << std::endl;
         record_new_instance_id(context);
     }
 
@@ -101,7 +106,7 @@ private:
         if (it == instances_.end())
             instances_[this] = current_id_;
         else
-            *out_ << std::format("ERROR: instance already exists, pointer={} id1={} id2={}", cast_format(this), it->second, current_id_) << std::endl;
+            *out_ << fmt::format("ERROR: instance already exists, pointer={} id1={} id2={}", cast_format(this), it->second, current_id_) << std::endl;
         if (control_ids_.contains(current_id_))
             callback_(current_id_, class_name_, context);
         ++current_id_;

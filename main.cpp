@@ -48,7 +48,7 @@ public:
     {
     }
 
-    MyData2(int v) : checker<MyData2>(std::format("toto, v={}", v))   //MODIFICATION: call construcot with context
+    MyData2(int v) : checker<MyData2>(fmt::format("toto, v={}", v))   //MODIFICATION: call construcot with context
     {
     }
 
