@@ -97,8 +97,12 @@ int main(int artgc, char** argv)
 {
     try
     {
-        //test1();
+        checker_common::setThreshold(2);
+        std::cout << "-------------------" << std::endl;
+        test1();
+        std::cout << "-------------------" << std::endl;
         test2();
+        std::cout << "-------------------" << std::endl;
     }
     catch (const std::exception& e)
     {

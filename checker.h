@@ -5,8 +5,19 @@
 #include <format>
 #include <string>
 
+class checker_common
+{
+public:
+    static void setThreshold(int threshold)
+    {
+        displayThreshold_ = threshold;
+    }
+protected:
+    static inline int displayThreshold_ = 3;
+};
+
 template<typename T>
-class checker
+class checker : public checker_common
 {
 public:
     checker()
@@ -39,9 +50,11 @@ public:
         else
             std::cout << std::format("ERROR: instance not found, this={}", (void*)this) << std::endl;
 
-        if (instances_.size()<3)
+        if (instances_.size() <= displayThreshold_)
         {
-            std::cout << "Remaining instances:" << instances_.size() << std::endl;
+            std::cout << "= Remaining instances:" << instances_.size() << std::endl;
+            for (const auto& v : instances_)
+                std::cout << std::format("=     ptr={} id={}", (void*)v.first, v.second) << std::endl;
         }
     }
 
