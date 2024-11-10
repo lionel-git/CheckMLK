@@ -400,3 +400,4 @@ FodyWeavers.xsd
 #
 main
 *.o
+log.txt

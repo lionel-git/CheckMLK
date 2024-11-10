@@ -109,7 +109,7 @@ int main(int artgc, char** argv)
     try
     {
         checker_common::setThreshold(2);
-        checker_common::setOutput("c:\\tmp\\log.txt");
+        checker_common::setOutput("log.txt");
 
         checker<MyData>::addControlIds({ 5, 7 });
         checker<MyData>::setCallback(callback);
