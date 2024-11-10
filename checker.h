@@ -59,6 +59,8 @@ public:
     }
 
 private:
+    using id_type = long;
+
     void record_new_instance(const std::string& context)
     {
         check_name();
@@ -82,7 +84,7 @@ private:
             class_name_ = typeid(T).name();
     }
 
-    long get_instance_id(const checker* ptr)
+    id_type get_instance_id(const checker* ptr)
     {
         auto it = instances_.find((void*)ptr);
         if (it != instances_.end())
@@ -90,8 +92,8 @@ private:
         return -1;
     }
 
-    static inline long current_id_ = 0;
-    static inline std::map<void*, long> instances_;
+    static inline id_type current_id_ = 0;
+    static inline std::map<void*, id_type> instances_;
     static inline std::string class_name_;
 };
 
