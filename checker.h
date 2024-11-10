@@ -1,12 +1,15 @@
 #pragma once
-#include <map>
-#include <iostream>
-#if defined(__cpp_lib_source_location)
+
+#include <version>
+#if defined(__cpp_lib_format)
 #include <format>
-using namespace fmt = std;
+namespace fmt = std;
 #else
 #include <fmt/format.h>
 #endif
+
+#include <map>
+#include <iostream>
 #include <string>
 #include <fstream>
 #include <set>
