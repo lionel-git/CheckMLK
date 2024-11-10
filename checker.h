@@ -86,14 +86,14 @@ private:
 
     id_type get_instance_id(const checker* ptr)
     {
-        auto it = instances_.find((void*)ptr);
+        auto it = instances_.find(ptr);
         if (it != instances_.end())
             return it->second;
         return -1;
     }
 
     static inline id_type current_id_ = 0;
-    static inline std::map<void*, id_type> instances_;
+    static inline std::map<const checker<T>*, id_type> instances_;
     static inline std::string class_name_;
 };
 
