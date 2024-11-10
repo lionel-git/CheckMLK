@@ -24,12 +24,12 @@ public:
 
     MyData(const MyData& data) : checker<MyData>(data)    //MODIFICATION: call copy constructor
     {
-        std::cout << "Copy constructor of MyData" << std::endl;
+        std::cout << "**** Copy constructor of MyData" << std::endl;
     }
 
     MyData& operator=(const MyData& data)
     {
-        std::cout << "Operator=" << std::endl;
+        std::cout << "**** Operator=" << std::endl;
         return *this;
     }
 
@@ -54,7 +54,7 @@ public:
 
     MyData2(const MyData2& data) : checker<MyData2>(data)      //MODIFICATION: call copy constructor        
     {
-        std::cout << "Copy constructor of MyData" << std::endl;
+        std::cout << "**** Copy constructor of MyData" << std::endl;
     }
 
     ~MyData2()
@@ -93,16 +93,32 @@ void test2()
     d2.testInplace(d1);
 }
 
+void sepLine(const std::string& msg)
+{
+    std::cout << "--" << msg << "----------------- " << std::endl;
+}
+
+void callback(long id, const std::string& class_name, const std::string& event)
+{
+    std::cout << "***** Callback called with id=" << id << " "<< class_name << " Event:" << event << std::endl;
+    // Put breakpoint here to check origin for controlled new/delete
+}
+
 int main(int artgc, char** argv) 
 {
     try
     {
         checker_common::setThreshold(2);
-        std::cout << "-------------------" << std::endl;
+        checker_common::setOutput("c:\\tmp\\log.txt");
+
+        checker<MyData>::addControlIds({ 5, 7 });
+        checker<MyData>::setCallback(callback);
+
+        sepLine("test1");
         test1();
-        std::cout << "-------------------" << std::endl;
+        sepLine("test2");
         test2();
-        std::cout << "-------------------" << std::endl;
+        sepLine("End");
     }
     catch (const std::exception& e)
     {
