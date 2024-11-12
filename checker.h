@@ -27,7 +27,7 @@ public:
     {
         out_ = new std::ofstream(fileName);
         if (!out_->good())
-            throw std::runtime_error("Error: cannot open file " + fileName);
+            throw std::runtime_error(fmt::format("Cannot open file: '{}'", fileName));
     }
 
 protected:
@@ -77,7 +77,7 @@ public:
 
         if (instances_.size() <= displayThreshold_)
         {
-            *out_ << "= Remaining instances for "<< class_name_ <<  ":" << instances_.size() << std::endl;
+            *out_ << fmt::format("= Remaining instances for {}: {}", class_name_, instances_.size()) << std::endl;
             for (const auto& v : instances_)
                 *out_ << fmt::format("=     ptr={} id={}", cast_format(v.first), v.second) << std::endl;
         }
@@ -115,9 +115,9 @@ private:
         ++current_id_;
     }
 
-    static void display_controlled(long id, const std::string& name, const std::string& event)
+    static void display_controlled(long id, const std::string& name, const std::string& eventName)
     {
-        *out_ << "Controlled instance: " << id << " for class " << name << " Event=" << event << std::endl;
+        *out_ << fmt::format("Controlled instance: {} for class {} Event={}", id, name, eventName) << std::endl;
     }
 
     void check_name()
@@ -125,7 +125,7 @@ private:
         if (class_name_.empty())
         {
             class_name_ = typeid(T).name();
-            *out_ << "==== Start Recording instances for class " << class_name_ << std::endl;
+            *out_ << fmt::format("==== Start Recording instances for class ", class_name_) << std::endl;
         }
     }
 

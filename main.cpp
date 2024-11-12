@@ -1,8 +1,7 @@
 #include <iostream>
 #include "checker.h"
 
-#pragma warning(disable: 4514)
-#pragma warning(disable: 5045)
+#pragma warning(disable: 4514 5045)
 
 class RootDAta
 {
