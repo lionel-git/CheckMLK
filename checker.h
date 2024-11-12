@@ -18,7 +18,7 @@ namespace fmt = std;
 class checker_common
 {
 public:
-    static void setThreshold(int threshold)
+    static void setThreshold(size_t threshold)
     {
         displayThreshold_ = threshold;
     }
@@ -31,7 +31,7 @@ public:
     }
 
 protected:
-    static inline int displayThreshold_ = 3;
+    static inline size_t displayThreshold_ = 3;
     static inline std::ostream* out_ = &std::cout;
 };
 

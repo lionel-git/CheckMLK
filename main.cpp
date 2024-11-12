@@ -1,6 +1,9 @@
 #include <iostream>
 #include "checker.h"
 
+#pragma warning(disable: 4514)
+#pragma warning(disable: 5045)
+
 class RootDAta
 {
 public:
@@ -18,7 +21,7 @@ class MyData : public RootDAta, public checker<MyData> //MODIFICATION: Inherit f
 public:
     MyData() = default;
 
-    MyData(int v)
+    MyData(int /*v*/)
     {
     }
 
@@ -27,7 +30,7 @@ public:
         std::cout << "**** Copy constructor of MyData" << std::endl;
     }
 
-    MyData& operator=(const MyData& data)
+    MyData& operator=(const MyData& /*data*/)
     {
         std::cout << "**** Operator=" << std::endl;
         return *this;
@@ -54,7 +57,7 @@ public:
 
     MyData2(const MyData2& data) : checker<MyData2>(data)      //MODIFICATION: call copy constructor        
     {
-        std::cout << "**** Copy constructor of MyData" << std::endl;
+        std::cout << "**** Copy constructor of MyData2" << std::endl;
     }
 
     ~MyData2()
@@ -104,7 +107,7 @@ void callback(long id, const std::string& class_name, const std::string& event)
     // Put breakpoint here to check origin for controlled new/delete
 }
 
-int main(int artgc, char** argv) 
+int main(int /*argc*/, char** /*argv*/) 
 {
     try
     {
