@@ -1,5 +1,12 @@
 #pragma once
 
+#ifdef _WIN32
+#pragma warning(push)
+#pragma warning(disable: 5039 4668)
+#include <Windows.h>
+#pragma warning(pop)
+#endif
+
 #include <version>
 #if defined(__cpp_lib_format)
 #include <format>
@@ -18,19 +25,45 @@ namespace fmt = std;
 class checker_common
 {
 public:
-    static void setThreshold(size_t threshold)
+    static size_t setThreshold(size_t threshold)
     {
         displayThreshold_ = threshold;
+        *out_ << fmt::format("## Set Threshold: {} (Module='{}')", displayThreshold_, get_module_name()) << std::endl;
+        return displayThreshold_;
     }
 
-    static void setOutput(const std::string& fileName)
+    static bool setOutput(const std::string& fileName)
     {
         out_ = new std::ofstream(fileName);
         if (!out_->good())
             throw std::runtime_error(fmt::format("Cannot open file: '{}'", fileName));
+        *out_ << fmt::format("## Set output: {} (Module='{}')", fileName, get_module_name()) << std::endl;
+        return true;
     }
 
 protected:
+    static std::string get_module_name()
+    {
+        return get_module_name(&displayThreshold_);
+    }
+
+    static std::string get_module_name(void* ptr)
+    {
+#ifdef _WIN32
+        char path[MAX_PATH];
+        HMODULE hModule = NULL;        
+        if ((GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCTSTR)ptr, &hModule) != 0)
+            && GetModuleFileNameA(hModule, path, MAX_PATH) != 0)
+            return path;
+#else
+        Dl_info info;
+        info.dli_fname = nullptr;
+        if (dladdr(ptr, &info) != 0 && info.dli_fname != nullptr)
+            return info.dli_fname;
+#endif
+        return "N/A";
+    }
+
     static inline size_t displayThreshold_ = 3;
     static inline std::ostream* out_ = &std::cout;
 };
@@ -83,15 +116,19 @@ public:
         }
     }
 
-    static void addControlIds(const std::vector<long>& list)
+    static size_t addControlIds(const std::vector<long>& list)
     {
+        *out_ << fmt::format("## Set controlIds, size: {} (Module='{}')", list.size(), get_module_name()) << std::endl;
         for (auto id : list)
             control_ids_.insert(id);
+        return control_ids_.size();
     }
 
-    static void setCallback(checker_callback_t callback)
+    static bool setCallback(checker_callback_t callback)
     {
+        *out_ << fmt::format("## Set callback: {} (Module='{}')", (void*)callback, get_module_name()) << std::endl;
         callback_ = callback;
+        return true;
     }
 
 private:
@@ -125,7 +162,7 @@ private:
         if (class_name_.empty())
         {
             class_name_ = typeid(T).name();
-            *out_ << fmt::format("==== Start Recording instances for class ", class_name_) << std::endl;
+            *out_ << fmt::format("==== Start Recording instances for class '{}' (Module='{}')", class_name_, get_module_name()) << std::endl;
         }
     }
 
