@@ -5,6 +5,8 @@
 #pragma warning(disable: 5039 4668)
 #include <Windows.h>
 #pragma warning(pop)
+#else
+#include <dlfcn.h>
 #endif
 
 #include <version>
@@ -32,13 +34,13 @@ public:
         return displayThreshold_;
     }
 
-    static bool setOutput(const std::string& fileName)
+    static size_t setOutput(const std::string& fileName)
     {
         out_ = new std::ofstream(fileName);
         if (!out_->good())
             throw std::runtime_error(fmt::format("Cannot open file: '{}'", fileName));
         *out_ << fmt::format("## Set output: {} (Module='{}')", fileName, get_module_name()) << std::endl;
-        return true;
+        return 0;
     }
 
 protected:
@@ -124,11 +126,11 @@ public:
         return control_ids_.size();
     }
 
-    static bool setCallback(checker_callback_t callback)
+    static size_t setCallback(checker_callback_t callback)
     {
         *out_ << fmt::format("## Set callback: {} (Module='{}')", (void*)callback, get_module_name()) << std::endl;
         callback_ = callback;
-        return true;
+        return 0;
     }
 
 private:

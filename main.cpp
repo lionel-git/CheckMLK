@@ -106,15 +106,21 @@ void callback(long id, const std::string& class_name, const std::string& event)
     // Put breakpoint here to check origin for controlled new/delete
 }
 
-auto initOutput = checker_common::setOutput("log.txt");
-auto initThreshold = checker_common::setThreshold(2);
-auto initControlsId = checker<MyData>::addControlIds({ 5, 7 });
-auto initCallBack = checker<MyData>::setCallback(callback);
+int initChecker()
+{
+ auto initOutput = checker_common::setOutput("log.txt");
+ auto initThreshold = checker_common::setThreshold(2);
+ auto initControlsId = checker<MyData>::addControlIds({ 5, 7 });
+ auto initCallBack = checker<MyData>::setCallback(callback);
+ return initOutput^initThreshold^initControlsId^initCallBack;
+}
 
 int main(int /*argc*/, char** /*argv*/) 
 {
     try
     {
+        initChecker();
+      
         sepLine("test1");
         test1();
         sepLine("test2");

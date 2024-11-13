@@ -1,6 +1,6 @@
 
 main : main.cpp
-	g++ -std=c++20 main.cpp -lfmt -o main
+	g++ -std=c++20 main.cpp -ldl -lfmt -o main
 
 clean:
 	rm  -f *.o ./main
