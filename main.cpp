@@ -110,16 +110,19 @@ int initChecker()
 {
  auto initOutput = checker_common::setOutput("log.txt");
  auto initThreshold = checker_common::setThreshold(2);
- auto initControlsId = checker<MyData>::addControlIds({ 5, 7 });
+ size_t initControlsId = 0;
+ initControlsId = checker<MyData>::addControlIds({ 5, 7 });
  auto initCallBack = checker<MyData>::setCallback(callback);
  return initOutput^initThreshold^initControlsId^initCallBack;
 }
+
+//auto initGlobal = initChecker();
 
 int main(int /*argc*/, char** /*argv*/) 
 {
     try
     {
-        initChecker();
+              initChecker();
       
         sepLine("test1");
         test1();
