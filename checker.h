@@ -2,9 +2,8 @@
 
 #ifdef _WIN32
 #pragma warning(push)
-#pragma warning(disable: 5039 4668)
+#pragma warning(disable: 5039 4668 4710 4711)
 #include <Windows.h>
-#pragma warning(pop)
 #else
 #include <dlfcn.h>
 #endif
@@ -53,7 +52,7 @@ protected:
     {
 #ifdef _WIN32
         char path[MAX_PATH];
-        HMODULE hModule = NULL;        
+        HMODULE hModule = NULL;
         if ((GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCTSTR)ptr, &hModule) != 0)
             && GetModuleFileNameA(hModule, path, MAX_PATH) != 0)
             return path;
@@ -187,3 +186,7 @@ private:
     static inline std::set<id_type> control_ids_;
     static inline checker_callback_t callback_ = display_controlled;
 };
+
+#ifdef _WIN32
+#pragma warning(pop)
+#endif

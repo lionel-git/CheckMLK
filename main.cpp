@@ -1,7 +1,8 @@
-#include <iostream>
-#include "checker.h"
 
-#pragma warning(disable: 4514 5045)
+#include "checker.h"
+#include <iostream>
+
+#pragma warning(disable: 4514 5045 5039 4668 4710 4711)
 
 class RootDAta
 {
@@ -40,7 +41,7 @@ public:
         new (this) MyData(data);
     }
 
-   // ~MyData() = default;
+    // ~MyData() = default;
 };
 
 class MyData2 : public RootDAta, public checker<MyData2>     //MODIFICATION: Inherit from checker<MyData2>
@@ -64,7 +65,7 @@ public:
     }
 };
 
-void test1()
+static void test1()
 {
     MyData2 data_spec2;
     MyData2 data_spec17(17);
@@ -86,7 +87,7 @@ void test1()
     }
 }
 
-void test2()
+static void test2()
 {
     MyData d1;
     MyData d2 = d1; // Rem: Call copy constructor !!!
@@ -95,35 +96,35 @@ void test2()
     d2.testInplace(d1);
 }
 
-void sepLine(const std::string& msg)
+static void sepLine(const std::string& msg)
 {
     std::cout << "--" << msg << "----------------- " << std::endl;
 }
 
-void callback(long id, const std::string& class_name, const std::string& event)
+static void callback(long id, const std::string& class_name, const std::string& event)
 {
-    std::cout << "***** Callback called with id=" << id << " "<< class_name << " Event:" << event << std::endl;
+    std::cout << "***** Callback called with id=" << id << " " << class_name << " Event:" << event << std::endl;
     // Put breakpoint here to check origin for controlled new/delete
 }
 
-int initChecker()
+static size_t initChecker()
 {
- auto initOutput = checker_common::setOutput("log.txt");
- auto initThreshold = checker_common::setThreshold(2);
- size_t initControlsId = 0;
- initControlsId = checker<MyData>::addControlIds({ 5, 7 });
- auto initCallBack = checker<MyData>::setCallback(callback);
- return initOutput^initThreshold^initControlsId^initCallBack;
+    auto initOutput = checker_common::setOutput("log.txt");
+    auto initThreshold = checker_common::setThreshold(2);
+    size_t initControlsId = 0;
+    initControlsId = checker<MyData>::addControlIds({ 5, 7 });
+    auto initCallBack = checker<MyData>::setCallback(callback);
+    return initOutput ^ initThreshold ^ initControlsId ^ initCallBack;
 }
 
 //auto initGlobal = initChecker();
 
-int main(int /*argc*/, char** /*argv*/) 
+int main(int /*argc*/, char** /*argv*/)
 {
     try
     {
-              initChecker();
-      
+        initChecker();
+
         sepLine("test1");
         test1();
         sepLine("test2");
@@ -134,7 +135,7 @@ int main(int /*argc*/, char** /*argv*/)
     {
         std::cerr << e.what() << std::endl;
     }
-    catch(...)
+    catch (...)
     {
         std::cerr << "Unknown exception" << std::endl;
     }
