@@ -91,7 +91,8 @@ public:
     {
         check_name();
         auto rhs_id = get_instance_id(&rhs);
-        *out_ << fmt::format("COPY CTOR {}, this={}, id={} | rhs={}, rhs_id={}", class_name_, cast_format(this), current_id_, cast_format(&rhs), rhs_id) << std::endl;
+        *out_ << fmt::format("COPY CTOR {}, this={}, id={} | rhs={}, rhs_id={}, count before={}", 
+            class_name_, cast_format(this), current_id_, cast_format(&rhs), rhs_id, instances_.size()) << std::endl;
         record_new_instance_id("COPY CTOR");
     }
 
@@ -101,17 +102,17 @@ public:
         auto it = instances_.find(this);
         if (it != instances_.end())
         {
-            *out_ << fmt::format("DTOR {}, this={}, id={}", class_name_, cast_format(this), it->second) << std::endl;
+            instances_.erase(it);
+            *out_ << fmt::format("DTOR {}, this={}, id={}, count after={}", class_name_, cast_format(this), it->second, instances_.size()) << std::endl;
             if (control_ids_.contains(it->second))
                 callback_(it->second, class_name_, "DTOR");
-            instances_.erase(it);
+           
         }
         else
             *out_ << fmt::format("ERROR: instance not found, this={}", cast_format(this)) << std::endl;
 
         if (instances_.size() <= displayThreshold_)
         {
-            *out_ << fmt::format("= Remaining instances for {}: {}", class_name_, instances_.size()) << std::endl;
             for (const auto& v : instances_)
                 *out_ << fmt::format("=     ptr={} id={}", cast_format(v.first), v.second) << std::endl;
         }
@@ -137,7 +138,7 @@ private:
     void record_new_instance(const std::string& context)
     {
         check_name();
-        *out_ << fmt::format("CTOR {} {}, this={}, id={}", class_name_, context, cast_format(this), current_id_) << std::endl;
+        *out_ << fmt::format("CTOR {} {}, this={}, id={}, count before={}", class_name_, context, cast_format(this), current_id_, instances_.size()) << std::endl;
         record_new_instance_id(context);
     }
 
