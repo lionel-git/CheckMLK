@@ -23,6 +23,8 @@ namespace fmt = std;
 #include <set>
 #include <vector>
 
+#define ENTRY_NOT_FOUND (-123456789)
+
 class checker_common
 {
 public:
@@ -99,13 +101,13 @@ public:
     ~checker()
     {
         check_name();
-        auto it = instances_.find(this);
-        if (it != instances_.end())
+        auto id = get_instance_id(this);
+        if (id != ENTRY_NOT_FOUND)
         {
-            instances_.erase(it);
-            *out_ << fmt::format("DTOR {}, this={}, id={}, count after={}", class_name_, cast_format(this), it->second, instances_.size()) << std::endl;
-            if (control_ids_.contains(it->second))
-                callback_(it->second, class_name_, "DTOR");
+            instances_.erase(this);
+            *out_ << fmt::format("DTOR {}, this={}, id={}, count after={}", class_name_, cast_format(this), id, instances_.size()) << std::endl;
+            if (control_ids_.contains(id))
+                callback_(id, class_name_, "DTOR");
            
         }
         else
@@ -144,11 +146,11 @@ private:
 
     void record_new_instance_id(const std::string& context)
     {
-        auto it = instances_.find(this);
-        if (it == instances_.end())
+        auto id = get_instance_id(this);
+        if (id == ENTRY_NOT_FOUND)
             instances_[this] = current_id_;
         else
-            *out_ << fmt::format("ERROR: instance already exists, pointer={} id1={} id2={}", cast_format(this), it->second, current_id_) << std::endl;
+            *out_ << fmt::format("ERROR: instance already exists, pointer={} id1={} id2={}", cast_format(this), id, current_id_) << std::endl;
         if (control_ids_.contains(current_id_))
             callback_(current_id_, class_name_, context);
         ++current_id_;
@@ -173,7 +175,7 @@ private:
         auto it = instances_.find(ptr);
         if (it != instances_.end())
             return it->second;
-        return -1;
+        return ENTRY_NOT_FOUND;
     }
 
     const void* cast_format(const checker* ptr)
