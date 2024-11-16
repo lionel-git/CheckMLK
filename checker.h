@@ -81,11 +81,9 @@ namespace mlk
     class checker : public checker_common
     {
     public:
-        
-
         checker()
         {
-            record_new_instance("CTOR");
+            record_new_instance("");
         }
 
         checker(const std::string& context)
@@ -96,31 +94,31 @@ namespace mlk
         checker(const checker& rhs)
         {
             check_name();
-            auto rhs_id = get_instance_id(&rhs);
-            *out_ << fmt::format("COPY CTOR {}, this={}, id={} | rhs={}, rhs_id={}, count before={}",
-                class_name_, cast_format(this), current_id_, cast_format(&rhs), rhs_id, instances_.size()) << std::endl;
+            id_type rhs_id;
+            get_instance_id(&rhs, rhs_id);
+            *out_ << fmt::format("COPY CTOR {} | {}",
+                format_ptr_id(true, "this", this, "id", current_id_, ""), format_ptr_id(false, "rhs", &rhs, "rhs_id", rhs_id, "count before")) << std::endl;
             record_new_instance_id("COPY CTOR");
         }
 
         ~checker()
         {
             check_name();
-            auto id = get_instance_id(this);
-            if (id != ENTRY_NOT_FOUND)
+            id_type id;
+            if (get_instance_id(this, id))
             {
                 instances_.erase(this);
-                *out_ << fmt::format("DTOR {}, this={}, id={}, count after={}", class_name_, cast_format(this), id, instances_.size()) << std::endl;
+                *out_ << fmt::format("DTOR {}", format_ptr_id(true, "this", this, "id", id, "count after")) << std::endl;
                 if (control_ids_.contains(id))
                     callback_(id, class_name_, "DTOR");
-
             }
             else
-                *out_ << fmt::format("ERROR: instance not found, this={}", cast_format(this)) << std::endl;
+                *out_ << fmt::format("ERROR: instance not found, this={}", format_ptr(this)) << std::endl;
 
             if (instances_.size() <= displayThreshold_)
             {
                 for (const auto& v : instances_)
-                    *out_ << fmt::format("=     ptr={} id={}", cast_format(v.first), v.second) << std::endl;
+                    *out_ << fmt::format("=     {}", format_ptr_id(false, "ptr", v.first, "id", v.second, "")) << std::endl;
             }
         }
 
@@ -144,17 +142,18 @@ namespace mlk
         void record_new_instance(const std::string& context)
         {
             check_name();
-            *out_ << fmt::format("CTOR {} {}, this={}, id={}, count before={}", class_name_, context, cast_format(this), current_id_, instances_.size()) << std::endl;
+            std::string context_str = context.empty() ? "" : fmt::format("[{}]", context);
+            *out_ << fmt::format("CTOR{} {}", context_str, format_ptr_id(true, "this", this, "id", current_id_, "count before")) << std::endl;
             record_new_instance_id(context);
         }
 
         void record_new_instance_id(const std::string& context)
         {
-            auto id = get_instance_id(this);
-            if (id == ENTRY_NOT_FOUND)
+            id_type id;
+            if (!get_instance_id(this, id))
                 instances_[this] = current_id_;
             else
-                *out_ << fmt::format("ERROR: instance already exists, pointer={} id1={} id2={}", cast_format(this), id, current_id_) << std::endl;
+                *out_ << fmt::format("ERROR: instance already exists, pointer={} id1={} id2={}", format_ptr(this), format_id(id), format_id(current_id_)) << std::endl;
             if (control_ids_.contains(current_id_))
                 callback_(current_id_, class_name_, context);
             ++current_id_;
@@ -174,17 +173,36 @@ namespace mlk
             }
         }
 
-        id_type get_instance_id(const checker* ptr)
+        bool get_instance_id(const checker* ptr, id_type& id)
         {
             auto it = instances_.find(ptr);
             if (it != instances_.end())
-                return it->second;
-            return ENTRY_NOT_FOUND;
+            {
+                id = it->second;
+                return true;
+            }
+            id = ENTRY_NOT_FOUND;
+            return false;
         }
 
-        const void* cast_format(const checker* ptr)
+        const void* format_ptr(const checker* ptr)
         {
             return (const void*)ptr;
+        }
+
+        const std::string format_id(id_type id)
+        {
+            return id == ENTRY_NOT_FOUND ? "ENTRY_NOT_FOUND" : fmt::format("{}", id);
+        }
+
+        std::string format_ptr_id(bool show_classname, 
+            const std::string& msg_ptr, const checker* ptr, 
+            const std::string& msg_id, id_type id,
+            const std::string& count_msg)
+        {
+            std::string classname_str = show_classname ? fmt::format("{}, ", class_name_) : "";
+            std::string count_msg_str = count_msg.empty() ? "" : fmt::format(", {}={}", count_msg, instances_.size());
+            return fmt::format("{}{}={}, {}={}{}", classname_str, msg_ptr, format_ptr(ptr), msg_id, format_id(id), count_msg_str);
         }
 
         static inline id_type current_id_ = 0;
