@@ -138,6 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="makefile" />
+    <None Include="makefile.fmt_format" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
