@@ -16,7 +16,7 @@ public:
     }
 };
 
-class MyData : public RootDAta, public checker<MyData> //MODIFICATION: Inherit from checker<MyData>
+class MyData : public RootDAta, public mlk::checker<MyData> //MODIFICATION: Inherit from checker<MyData>
 {
 public:
     MyData() = default;
@@ -25,7 +25,7 @@ public:
     {
     }
 
-    MyData(const MyData& data) : checker<MyData>(data)    //MODIFICATION: call copy constructor
+    MyData(const MyData& data) : mlk::checker<MyData>(data)    //MODIFICATION: call copy constructor
     {
         std::cout << "**** Copy constructor of MyData" << std::endl;
     }
@@ -44,18 +44,18 @@ public:
     // ~MyData() = default;
 };
 
-class MyData2 : public RootDAta, public checker<MyData2>     //MODIFICATION: Inherit from checker<MyData2>
+class MyData2 : public RootDAta, public mlk::checker<MyData2>     //MODIFICATION: Inherit from checker<MyData2>
 {
 public:
     MyData2()
     {
     }
 
-    MyData2(int v) : checker<MyData2>(fmt::format("toto, v={}", v))   //MODIFICATION: call construcot with context
+    MyData2(int v) : mlk::checker<MyData2>(fmt::format("toto, v={}", v))   //MODIFICATION: call construcot with context
     {
     }
 
-    MyData2(const MyData2& data) : checker<MyData2>(data)      //MODIFICATION: call copy constructor        
+    MyData2(const MyData2& data) : mlk::checker<MyData2>(data)      //MODIFICATION: call copy constructor        
     {
         std::cout << "**** Copy constructor of MyData2" << std::endl;
     }
@@ -109,11 +109,11 @@ static void callback(long id, const std::string& class_name, const std::string& 
 
 static size_t initChecker()
 {
-    auto initOutput = checker_common::setOutput("log.txt");
-    auto initThreshold = checker_common::setThreshold(2);
+    auto initOutput = mlk::checker_common::setOutput("log.txt");
+    auto initThreshold = mlk::checker_common::setThreshold(2);
     size_t initControlsId = 0;
-    initControlsId = checker<MyData>::addControlIds({ 5, 7 });
-    auto initCallBack = checker<MyData>::setCallback(callback);
+    initControlsId = mlk::checker<MyData>::addControlIds({ 5, 7 });
+    auto initCallBack = mlk::checker<MyData>::setCallback(callback);
     return initOutput ^ initThreshold ^ initControlsId ^ initCallBack;
 }
 
