@@ -117,13 +117,14 @@ static size_t initChecker()
     return initOutput ^ initThreshold ^ initControlsId ^ initCallBack;
 }
 
-//auto initGlobal = initChecker();
+// rem: crashes on g++, ok on clang++, icx, msvc
+auto initGlobal = initChecker();
 
 int main(int /*argc*/, char** /*argv*/)
 {
     try
     {
-        initChecker();
+      //  initChecker();
 
         sepLine("test1");
         test1();
