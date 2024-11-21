@@ -2,7 +2,7 @@
 
 #ifdef _WIN32
 #pragma warning(push)
-#pragma warning(disable: 5039 4668 4710 4711)
+#pragma warning(disable: 4365 5039 4668 4710 4711)
 #include <Windows.h>
 #else
 #include <dlfcn.h>
