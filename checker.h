@@ -155,7 +155,12 @@ namespace mlk
             else
                 *out_ << fmt::format("ERROR: instance already exists, pointer={} id1={} id2={}", format_ptr(this), format_id(id), format_id(current_id_)) << std::endl;
             if (control_ids_.contains(current_id_))
-                callback_(current_id_, class_name_, context);
+            {
+                std::string ctx = "CTOR";
+                if (!context.empty())
+                    ctx += " [" + context + "]";
+                callback_(current_id_, class_name_, ctx);
+            }
             ++current_id_;
         }
 

@@ -111,9 +111,15 @@ static size_t initChecker()
 {
     auto initOutput = mlk::checker_common::setOutput("log.txt");
     auto initThreshold = mlk::checker_common::setThreshold(2);
+
     size_t initControlsId = 0;
+    size_t initCallBack = 0;
     initControlsId = mlk::checker<MyData>::addControlIds({ 5, 7 });
-    auto initCallBack = mlk::checker<MyData>::setCallback(callback);
+    initCallBack = mlk::checker<MyData>::setCallback(callback);
+
+    initControlsId = mlk::checker<MyData2>::addControlIds({ 1 });
+    initCallBack = mlk::checker<MyData2>::setCallback(callback);
+
     return initOutput ^ initThreshold ^ initControlsId ^ initCallBack;
 }
 
