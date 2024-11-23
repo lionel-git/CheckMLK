@@ -124,7 +124,8 @@ namespace mlk
 
         static size_t addControlIds(const std::vector<long>& list)
         {
-            *out_ << fmt::format("## Set controlIds, size: {} (Module='{}')", list.size(), get_module_name()) << std::endl;
+            check_name();
+            *out_ << fmt::format("## Set controlIds for {}, size={} (Module='{}')", class_name_, list.size(), get_module_name()) << std::endl;
             for (auto id : list)
                 control_ids_.insert(id);
             return control_ids_.size();
@@ -132,7 +133,8 @@ namespace mlk
 
         static size_t setCallback(checker_callback_t callback)
         {
-            *out_ << fmt::format("## Set callback: {} (Module='{}')", (void*)callback, get_module_name()) << std::endl;
+            check_name();
+            *out_ << fmt::format("## Set callback for {}: {} (Module='{}')", class_name_, (void*)callback, get_module_name()) << std::endl;
             callback_ = callback;
             return 0;
         }
@@ -142,7 +144,7 @@ namespace mlk
         void record_new_instance(const std::string& context)
         {
             check_name();
-            std::string context_str = context.empty() ? "" : fmt::format("[{}]", context);
+            std::string context_str = context.empty() ? "" : fmt::format("({})", context);
             *out_ << fmt::format("CTOR{} {}", context_str, format_ptr_id(true, "this", this, "id", current_id_, "count before")) << std::endl;
             record_new_instance_id(context);
         }
@@ -169,11 +171,14 @@ namespace mlk
             *out_ << fmt::format("Controlled instance: {} for class {} Event={}", id, name, eventName) << std::endl;
         }
 
-        void check_name()
+        static void check_name()
         {
             if (class_name_.empty())
             {
                 class_name_ = typeid(T).name();
+                if (class_name_.starts_with("class "))
+                    class_name_ = class_name_.substr(6);
+                class_name_ = "[" + class_name_ + "]";
                 *out_ << fmt::format("==== Start Recording instances for class '{}' (Module='{}')", class_name_, get_module_name()) << std::endl;
             }
         }
