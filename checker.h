@@ -178,6 +178,9 @@ namespace mlk
                 class_name_ = typeid(T).name();
                 if (class_name_.starts_with("class "))
                     class_name_ = class_name_.substr(6);
+                auto pos = class_name_.find_first_not_of("0123456789");
+                if (pos != std::string::npos)
+                    class_name_ = class_name_.substr(pos);
                 class_name_ = "[" + class_name_ + "]";
                 *out_ << fmt::format("==== Start Recording instances for class '{}' (Module='{}')", class_name_, get_module_name()) << std::endl;
             }
