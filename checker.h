@@ -30,6 +30,8 @@ namespace mlk
 
     constexpr id_type ENTRY_NOT_FOUND = -123456789;
 
+    using statistics_function_t = std::string (*) ();
+
     class checker_common
     {
     public:
@@ -47,6 +49,14 @@ namespace mlk
                 throw std::runtime_error(fmt::format("Cannot open file: '{}'", fileName));
             *out_ << fmt::format("## Set output: {} (Module='{}')", fileName, get_module_name()) << std::endl;
             return 0;
+        }
+
+        static std::string get_all_statistics()
+        {
+            std::ostringstream oss;
+            for (const auto& f : statistics_function_)
+                oss << f() << std::endl;
+            return oss.str();
         }
 
     protected:
@@ -72,8 +82,14 @@ namespace mlk
             return "N/A";
         }
 
+        static void register_statistics_function(statistics_function_t func)
+        {
+            statistics_function_.insert(func);
+        }
+
         static inline size_t displayThreshold_ = 3;
         static inline std::ostream* out_ = &std::cout;
+        static inline std::set<statistics_function_t> statistics_function_;
     };
 
     using checker_callback_t = void (*) (long id, const std::string& class_name, const std::string& event);
@@ -202,6 +218,7 @@ namespace mlk
                     class_name_ = class_name_.substr(pos);
                 class_name_ = "[" + class_name_ + "]";
                 *out_ << fmt::format("==== Start Recording instances for class '{}' (Module='{}')", class_name_, get_module_name()) << std::endl;
+                register_statistics_function(&get_statistics);
             }
         }
 

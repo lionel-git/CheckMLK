@@ -156,6 +156,20 @@ static void test4()
     }
 }
 
+static void testStats()
+{
+    std::cout << " ### Statistics ###" << std::endl;
+    std::cout << mlk::checker<RootData>::get_statistics() << std::endl;
+    std::cout << mlk::checker<MyData>::get_statistics() << std::endl;
+    std::cout << mlk::checker<MyData2>::get_statistics() << std::endl;
+    std::cout << mlk::checker<MyData3>::get_statistics() << std::endl;
+    std::cout << mlk::checker<MyDataEx>::get_statistics() << std::endl;
+    std::cout << " ### All Statistics ###" << std::endl;
+    std::cout << mlk::checker_common::get_all_statistics();
+}
+
+
+
 static void sepLine(const std::string& msg)
 {
     std::cout << "--" << msg << "----------------- " << std::endl;
@@ -198,14 +212,10 @@ int main(int /*argc*/, char** /*argv*/)
         test2();
         sepLine("test3");
         test3();
-        sepLine("End");
+        sepLine("test4");
         test4();
-        std::cout << " ### Statistics ###" << std::endl;
-        std::cout << mlk::checker<RootData>::get_statistics() << std::endl;
-        std::cout << mlk::checker<MyData>::get_statistics() << std::endl;
-        std::cout << mlk::checker<MyData2>::get_statistics() << std::endl;
-        std::cout << mlk::checker<MyData3>::get_statistics() << std::endl;
-        std::cout << mlk::checker<MyDataEx>::get_statistics() << std::endl;
+        sepLine("testStats");
+        testStats();
         sepLine("End");
     }
     catch (const std::exception& e)
