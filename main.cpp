@@ -1,6 +1,7 @@
 
 #include "checker.h"
 #include <iostream>
+#include <memory>
 
 #pragma warning(disable: 4514 5045 5039 4668 4710 4711)
 
