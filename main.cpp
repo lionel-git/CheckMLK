@@ -4,19 +4,19 @@
 
 #pragma warning(disable: 4514 5045 5039 4668 4710 4711)
 
-class RootDAta
+class RootData
 {
 public:
-    RootDAta()
+    RootData()
     {
     }
 
-    ~RootDAta()
+    ~RootData()
     {
     }
 };
 
-class MyData : public RootDAta, public mlk::checker<MyData> //MODIFICATION: Inherit from checker<MyData>
+class MyData : public RootData, public mlk::checker<MyData> //MODIFICATION: Inherit from checker<MyData>
 {
 public:
     MyData() = default;
@@ -44,7 +44,7 @@ public:
     // ~MyData() = default;
 };
 
-class MyData2 : public RootDAta, public mlk::checker<MyData2>     //MODIFICATION: Inherit from checker<MyData2>
+class MyData2 : public RootData, public mlk::checker<MyData2>     //MODIFICATION: Inherit from checker<MyData2>
 {
 public:
     MyData2()
@@ -63,6 +63,47 @@ public:
     ~MyData2()
     {
     }
+};
+
+class MyData3 : public MyData, public mlk::checker<MyData3>     //MODIFICATION: Inherit from checker<MyData2>
+{
+public:
+    MyData3()
+    {
+    }
+
+    MyData3(int v) : v_(v)
+    {
+    }
+
+    MyData3(const MyData3& data) : mlk::checker<MyData3>(data)      //MODIFICATION: call copy constructor        
+    {
+        std::cout << "**** Copy constructor of MyData2" << std::endl;
+    }
+
+    ~MyData3()
+    {
+    }
+private:
+    int v_{ 0 };
+};
+
+struct MyDataEx : public mlk::checker<MyDataEx>
+{
+    MyDataEx(bool throwException)
+    {
+        pMyData = new MyData();
+        if (throwException)
+            throw std::runtime_error("MyDataEx exception");
+    }
+    ~MyDataEx()
+    {
+        std::cout << "*********** MyDataEx dtor **************" << std::endl;
+        delete pMyData;
+    }
+
+private:
+    MyData* pMyData{ nullptr };
 };
 
 static void test1()
@@ -94,6 +135,25 @@ static void test2()
     d2 = d2;        // Call operator=
 
     d2.testInplace(d1);
+}
+
+static void test3()
+{
+    MyData3 d3 (17);
+}
+
+static void test4()
+{
+    try
+    {
+        auto pDataEx1 = std::make_unique<MyDataEx>(false);
+        auto pDataEx2 = std::make_unique<MyDataEx>(true);
+        std::cout << "Test" << std::endl;
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "Ex in ctor:" << e.what() << std::endl;
+    }
 }
 
 static void sepLine(const std::string& msg)
@@ -136,6 +196,16 @@ int main(int /*argc*/, char** /*argv*/)
         test1();
         sepLine("test2");
         test2();
+        sepLine("test3");
+        test3();
+        sepLine("End");
+        test4();
+        std::cout << " ### Statistics ###" << std::endl;
+        std::cout << mlk::checker<RootData>::get_statistics() << std::endl;
+        std::cout << mlk::checker<MyData>::get_statistics() << std::endl;
+        std::cout << mlk::checker<MyData2>::get_statistics() << std::endl;
+        std::cout << mlk::checker<MyData3>::get_statistics() << std::endl;
+        std::cout << mlk::checker<MyDataEx>::get_statistics() << std::endl;
         sepLine("End");
     }
     catch (const std::exception& e)

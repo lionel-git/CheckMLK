@@ -2,7 +2,7 @@
 
 #ifdef _WIN32
 #pragma warning(push)
-#pragma warning(disable: 4365 5039 4668 4710 4711)
+#pragma warning(disable: 4365 5039 4668 4710 4711 4820)
 #include <Windows.h>
 #else
 #include <dlfcn.h>
@@ -22,6 +22,7 @@ namespace fmt = std;
 #include <fstream>
 #include <set>
 #include <vector>
+#include <sstream>
 
 namespace mlk
 {
@@ -139,6 +140,22 @@ namespace mlk
             return 0;
         }
 
+        static std::string get_statistics()
+        {
+            std::ostringstream oss;
+            if (!class_name_.empty())
+            {
+                oss << "Class Name: " << class_name_ << std::endl;
+                oss << " Current id: " << current_id_ << std::endl;
+                oss << " Instances: " << instances_.size();
+            }
+            else
+            {
+                oss << "No event recorded for type: " << typeid(T).name();
+            }
+            return oss.str();
+        }
+
     private:
 
         void record_new_instance(const std::string& context)
@@ -178,6 +195,8 @@ namespace mlk
                 class_name_ = typeid(T).name();
                 if (class_name_.starts_with("class "))
                     class_name_ = class_name_.substr(6);
+                else if (class_name_.starts_with("struct "))
+                    class_name_ = class_name_.substr(7);
                 auto pos = class_name_.find_first_not_of("0123456789");
                 if (pos != std::string::npos)
                     class_name_ = class_name_.substr(pos);
