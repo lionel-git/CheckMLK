@@ -219,7 +219,15 @@ namespace mlk
                 class_name_ = "[" + class_name_ + "]";
                 *out_ << fmt::format("==== Start Recording instances for class '{}' (Module='{}')", class_name_, get_module_name()) << std::endl;
                 register_statistics_function(&get_statistics);
+                calculateoffset();
             }
+        }
+
+        static void calculateoffset()
+        {
+            auto p_T = (T*)(0x55555555);
+            auto p_checker = (mlk::checker<T>*)p_T;
+            offset_ = (int)((char*)p_T - (char*)p_checker);
         }
 
         bool get_instance_id(const checker* ptr, id_type& id)
@@ -236,7 +244,7 @@ namespace mlk
 
         const void* format_ptr(const checker* ptr)
         {
-            return (const void*)ptr;
+            return (const void*)(((char*)ptr) + offset_);
         }
 
         const std::string format_id(id_type id)
@@ -259,6 +267,7 @@ namespace mlk
         static inline std::string class_name_;
         static inline std::set<id_type> control_ids_;
         static inline checker_callback_t callback_ = display_controlled;
+        static inline int offset_ = 0; // offset to apply when converting pointer from mlk::checker<T>* to T*
     };
 
 } // namespace mlk
