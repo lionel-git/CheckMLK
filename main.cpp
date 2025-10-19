@@ -66,7 +66,7 @@ public:
     }
 };
 
-class MyData3 : public MyData, public mlk::checker<MyData3>     //MODIFICATION: Inherit from checker<MyData2>
+class MyData3 : public MyData, public mlk::checker<MyData3>     //MODIFICATION: Inherit from checker<MyData3>
 {
 public:
     MyData3()
