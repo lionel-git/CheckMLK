@@ -140,6 +140,7 @@
     <None Include="makefile" />
     <None Include="makefile.fmt_format" />
     <None Include="makefile.icx" />
+    <None Include="readme.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

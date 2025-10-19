@@ -34,5 +34,6 @@
     <None Include="makefile.icx">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="readme.md" />
   </ItemGroup>
 </Project>
